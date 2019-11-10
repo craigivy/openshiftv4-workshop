@@ -1,0 +1,207 @@
+[[custom-java-app]]
+= Build Spring Boot Application
+
+In this exercise we will deploy a Java application
+
+== Create Project
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
+- Click `Create Project`
+
+image::dev-project.png[image]
+
+- Enter *java-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+We want to use the S2I image directly from a external registry
+that is outside OpenShift environment. The Spring Boot image was not in
+the catalog. In this lab, we will learn how to add the Spring Boot image
+to the project catalog so that you can deploy the application directly
+from your screen.
+
+== Add the Spring Boot image stream.
+
+We will use the image stream from the following YAML
+
+....
+{
+    "kind": "ImageStream",
+    "apiVersion": "image.openshift.io/v1",
+    "metadata": {
+        "name": "springboot"
+    },
+    "spec": {
+        "tags": [
+            {
+                "name": "latest",
+                "annotations": {
+                    "description": "Spring Boot S2I Image CentOS based",
+                    "iconClass": "icon-jboss",
+                    "tags": "builder,springboot,java,maven",
+                    "supports": "springboot,java:8,maven",
+                    "version": "1.0"
+                },
+            "from": {
+              "kind": "DockerImage",
+              "name": "docker.io/veermuchandi/spring-mvn-base:latest"
+            }
+            }
+        ]
+    }
+}
+....
+
+Notice, that this json points to the Spring Boot S2I builder Image on
+docker hub.
+
+You have two ways to add this to the catalog.
+1. Add from command line
+2. Add using the web console
+
+=== To add using CLI run the `oc create` command:
+
+....
+$ oc create -f https://raw.githubusercontent.com/piggyvenus/openshiftv4-workshop/ocp4.2/springboot.json
+imagestream "springboot" created
+....
+
+Check by running `oc get is`
+
+You can also search your spring boot image by running the following
+command:
+
+....
+$ oc new-app --search springboot
+Image streams (oc new-app --image-stream=<image-stream> [--code=<source>])
+-----
+springboot
+  Project: java-project
+  Tags:    latest
+....
+
+'''''
+
+=== To add using the web console,
+
+- Select `+Add` from the left menu
+- Click `YAML` from the selection
+- Copy paste the above imagestream contents into the text box
+- Click `Create` button.
+
+== Deploy application
+
+Now it is time to create your application and use the Spring Boot S2I image to deploy your sample Spring Boot application
+https://github.com/RedHatWorkshops/spring-sample-app
+....
+$ oc new-app springboot~https://github.com/RedHatWorkshops/spring-sample-app --name=springbootapp
+--> Found image c3ddd9e (2 years old) in image stream "java-project/springboot" under tag "latest" for "springboot"
+
+    Spring Boot Maven 3
+    -------------------
+    Platform for building and running Spring Boot applications
+
+    Tags: builder, java, java8, maven, maven3, springboot
+
+    * A source build using source code from https://github.com/RedHatWorkshops/spring-sample-app will be created
+      * The resulting image will be pushed to image stream tag "springbootapp:latest"
+      * Use 'oc start-build' to trigger a new build
+    * This image will be deployed in deployment config "springbootapp"
+    * Port 8080/tcp will be load balanced by service "springbootapp"
+      * Other containers can access this service through the hostname "springbootapp"
+
+--> Creating resources ...
+    imagestream.image.openshift.io "springbootapp" created
+    buildconfig.build.openshift.io "springbootapp" created
+    deploymentconfig.apps.openshift.io "springbootapp" created
+    service "springbootapp" created
+--> Success
+    Build scheduled, use 'oc logs -f bc/springbootapp' to track its progress.
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+     'oc expose svc/springbootapp'
+    Run 'oc status' to view your app.
+....
+
+
+=== Developer Console
+
+- Go to Web Console
+- Switch to `Developer` persona
+- Click `Builds` on the left menu
+- Click `springbootapp` build config
+- Click `Builds` tab
+- Click `springbootapp-1`
+- Click `Logs` tab -> scroll to the bottom
+- If you see `Push successful`, it means build has completed.
+
+....
+Writing manifest to image destination
+Storing signatures
+Successfully pushed image-registry.openshift-image-registry.svc:5000/java-project/springbootapp@sha256:0bea0c6eaaf4acb1fe09319b4f0f99cceffb03aa7bfb727b87742b9419ab3a93
+Push successful
+....
+
+- Click `Topology` on the left menu
+- Click onto the center of the springboot icon
+- Click `view logs` to view log from the Java process
+
+image::view-logs.png[image]
+
+=== Create Route
+
+- Use terminal to login
+....
+$ oc project
+$ oc get svc
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+springbootapp   ClusterIP   172.30.107.19   <none>        8080/TCP   107m
+$ oc expose svc springbootapp
+route.route.openshift.io/springbootapp exposed
+....
+
+=== Check the Route
+
+- From `Developer` persona
+- Click `Topology`
+- Click on the route link from the springboot icon
+
+image::route-link.png[image]
+
+- Congratulations! You have deployed a Java Spring Boot Application.
+
+=== Debugging Application
+You may wonder how do we debug the application on the container platform.
+Now, let take a look at the OpenShift's aggregated logging console.
+
+- Go to the web console {{CONSOLE_ADDRESS}}
+- Switch to `Administrator` persona
+- Click `Monitoring` on the left menu
+- Click `Logging` to access the Logging Console
+- Click `htpasswd` to login using your username and Password
+- Click `Allow selected permissions`
+- you should get to a screen as shown below
+
+image::kibana.png[image]
+
+NOTE: if nothing show, pick a 1 hour time range instead
+
+- Under `Available Fields`, click `add` next to `kubernetes.namespace_name`
+
+image::available-fields.png[image]
+
+- Click `add` next to `message`
+- Click `Add a filter +` on the top
+- Add filter to search for `message` `is one of` `Started` as shown below
+
+image::add-filter.png[image]
+
+- Click `Save`
+- Search result is shown as below.
+
+image::search-log.png[image]
+
+With the aggregated logging, you will be able to see not only the logs from current running pod and also all the logs from the application. Also, logging is fully integrated with the RABC on OpenShift.

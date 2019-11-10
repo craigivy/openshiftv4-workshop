@@ -18,9 +18,9 @@ config:
     - name: API_URL
       desc: URL to API server
       value: https://api.cluster-8f8a.sandbox1118.opentlc.com:6443
-    - name: REDHAT_DOWNLOAD_OC_PORTAL_URL
-      desc: URL for Red Hat portal oc binary download
-      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
+    - name: LOGGING_URL
+      desc: Logging URL
+      value: https://kibana-openshift-logging.apps.cluster-8f8a.sandbox1118.opentlc.com/
 
 modules:
   0-setting-up-client-tools:
@@ -29,12 +29,10 @@ modules:
     name: Verify Connectivity
   02-create-app-from-container-image:
     name: Create an App using Container image
-  03-deploy-java-app:
-    name: Deploy a Java Application
   04-deploy-dotnet-app:
     name: Deploy a .Net core Application
-  05-adding-database-to-springboot-app:
-    name: Configmap vs Env variables
+  05-custom-java-app:
+    name: Deploy Java application
   06-cicd-short:
     name: Create a Pipeline
   07-using-codeready:

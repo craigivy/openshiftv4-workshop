@@ -178,6 +178,12 @@ You may wonder how do we debug the application on the container platform.
 Now, let take a look at the OpenShift's aggregated logging console.
 
 - Go to the web console {{CONSOLE_ADDRESS}}
+- Make sure you are using `Developer` persona
+- Click `Topology`
+- Click on the name of the pod on the details
+- Click `Actions` -> `Delete Pod`
+- Wait for the pod to come up as `Running`
+- Click `Actions` -> `Delete Pod`
 - Switch to `Administrator` persona
 - Click `Monitoring` on the left menu
 - Click `Logging` to access the Logging Console

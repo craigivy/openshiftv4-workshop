@@ -1,0 +1,262 @@
+[[cicd]]
+= Creating a Pipeline
+
+In this lab, we will learn to create a build pipeline on OpenShift. This
+pipeline will be setup using Jenkins running as an application pod on
+OpenShift. The pipeline running on Jenkins will trigger builds and
+deployments on OpenShift.
+
+== Prerequisites:
+
+  * You need a github account if you want to make changes and test the pipeline kick-off.
+  * You will be using the projects you created in the "Promoting Applications" lab.
+
+== Create Project
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
+- Click `Create Project`
+
+image::dev-project.png[image]
+
+- Enter *pipeline-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+== Deploy OOTB Jenkins
+
+- Navigate to `+Add`
+- Click on `From Catalog`
+
+image::from-catalog.png[image]
+
+- Check the `checkbox` next to `Template`
+- Enter `Jenkins` in the `Filter by keyword`
+
+image::pick-templates.png[image]
+
+- Click `Jenkins (Ephemeral)`
+- Click `Instantiate Template`
+- Take the default values and click `Create`
+- Navigate to `Topology`
+- Click onto the middle of the Jenkins icon to see the details
+- Wait for the solid blue ring shows on the icon
+- Click onto the route link to go to Jenkins Console
+
+image::route-link.png[image]
+
+- Click `Advanced`
+- Click the link where it shows `Proceed to jenkins-...`
+- Click `Log in with OpenShift`
+
+image::jenkins-login.png[image]
+
+- Click `htpasswd`
+- Login using your user name
+- Click `Allow selected permissions`
+- You now login the Jenkins console
+
+image::jenkins.png[image]
+
+== Deploy your CI/CD tool (Jenkins)
+
+- Login {{CONSOLE_ADDRESS}}
+- From `Developer` persona
+- Click on `+Add` on the left menu
+- Click `YAML`
+- Enter the following in the text area
+
+....
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: myfirstpipeline
+  labels:
+    name: myfirstpipeline
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "myphp", "namespace": "", "kind": "DeploymentConfig"}]'
+spec:
+  triggers:
+    -
+      type: GitHub
+      github:
+        secret: secret101
+    -
+      type: Generic
+      generic:
+        secret: secret101
+  runPolicy: Serial
+  source:
+    type: None
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfile: "node() {\nstage 'build'\nopenshiftBuild(buildConfig: 'myphp', showBuildLogs: 'true')\nstage 'deploy'\nopenshiftDeploy(deploymentConfig: 'myphp')\nopenshiftScale(deploymentConfig: 'myphp',replicaCount: '2')\n}"
+  output:
+  resources:
+  postCommit:
+....
+
+  Note that the build configuration uses `JenkinsPipelineStrategy`. Also
+  the `spec.strategy.jenkinsPipelineStrategy.jenkinsfile` is the actual
+  pipeline that runs. We will discuss that in the next step.
+
+== Create projects & Permissions and Configuration Changes
+
+
+The Jenkins user in the jenkins project you created needs to have access to the
+projects `development-UserName` and `testing-UserName`. Just for testing; we
+will give jenkins full access to these projects.
+
+- Go to terminal
+- Login via `oc login -u Userxx {{API_URL}}`
+- Execute the following OC commands
+
+....
+oc new-project testing-UserName
+oc new-project development-UserName
+oc adm policy add-role-to-group system:image-puller system:serviceaccounts:testing-UserName -n development-UserName
+oc adm policy add-role-to-user admin system:serviceaccount:pipeline-UserName:jenkins -n development-UserName
+oc adm policy add-role-to-user admin system:serviceaccount:pipeline-UserName:jenkins -n testing-UserName
+oc project development-UserName
+oc new-app openshift/php~https://github.com/RedHatWorkshops/welcome-php
+....
+
+For reference the syntax is: `system:serviceaccount:PROJECTNAME:SERVICEACCOUNT`
+
+== Updating the pipeline
+
+- From `Developer` persona
+- Click `Builds`
+- Click on BuildConfig `myfirstpipeline`
+- Under the `Overview` tab, you can see the details about the pipeline
+- Click `YAML` tab
+- Edit the current content of `jenkinsfile` with the following. Please update
+`UserName` to your username.
+
+....
+strategy:
+  type: JenkinsPipeline
+  jenkinsPipelineStrategy:
+    jenkinsfile: |-
+    node() {
+
+      stage 'build'
+
+      sh 'oc start-build welcome-php -n development-UserName'
+
+      stage 'deploy'
+
+      sh 'oc rollout latest welcome-php -n development-UserName'
+
+      stage 'cleanup testing'
+
+      sh 'oc delete all --all -n testing-UserName'
+
+      stage 'deployInTesting'
+
+      input 'Promote Dev Image to Testing?'
+
+      sh 'oc tag development-UserName/welcome-php:latest
+      testing-UserName/welcome-php:promote-qa'
+
+      sh 'oc new-app testing-UserName/welcome-php:promote-qa -n testing-UserName'
+
+      sh 'oc scale --replicas=3 dc welcome-php -n testing-UserName'
+
+
+      }
+....
+
+- Click `Save`. (Make sure you change the values according to your configuration)
+
+
+=== Disable Deployment Trigger
+
+- From the top, select `development-UserName` project
+- Click `Topology`
+- Click onto the middle icon of `welcome-php`
+- Click `DC welcome-php` from the top of detail page
+- Click `YAML`
+- Search for `automatic` and update the `automatic: true` to `automatic: false`
+as shown below.
+
+```
+triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: false
+```
+- Click `Save`
+
+== Start Pipeline
+
+- From the top, select `pipeline-UserName` project
+- Click `Builds`
+- Click onto `myfirstpipeline`
+- Click `Actions` --> `Start Build`
+- Click `View Logs`
+
+image::myfirstpipeline.png[image]
+
+- Click `Input Required` link under `deployInTesting` stage
+- You will give redirect to the Jenins Console
+- Click `Open Blue Ocean` on the left menu
+
+image::blueocean.png[image]
+
+- After few seconds, the pipeline is completed
+
+image::pipeline-completed.png[image]
+
+- Go back to OpenShift Console, `Developer` persona
+- Click to go to `testing-Username` project
+- The deployment automatically scale up to 3 pods
+
+image::testing-result.png[image]
+
+== Configure webhook and trigger with changes (optional)
+
+- Go back to the build pipeline `myfirstpipeline`
+- Click `YAML`
+- The following is the configuration of webhook for the BuildConfig
+
+```
+triggers:
+    - type: GitHub
+      github:
+        secret: secret101
+    - type: Generic
+      generic:
+        secret: secret101
+```
+- Click `Overview` tab and scroll down the page
+
+image::webhook.png[image]
+
+- Click `Copy URL with Secret` for `Github webhook`
+- Use this URL to configure your github repo to trigger the pipeline
+
+=== Setting it up from github
+Based on what you learn in the past, go to your github repository that
+you cloned and set up a webhook pointing to this URL.
+
+- Navigate to `Settings` -> `Webhooks` on your project in github
+- Set the `Payload URL` to `Github Webhook` URL noted above
+- Make sure the `Content Type` is set to `application/json`
+- Press on `Disable SSL`
+- Press on `Add Webhook`
+
+Now edit the one of the file in your repo and `Commit` changes.
+Pipeline build will be triggered.
+
+Come back and watch the Web Console, you will notice that a new build
+has just started. Once the build completes, you will also see the
+rolling deployment of the pods.
+
+Congratulations!! In this lab, you have learnt how to set up and run
+your own CI/CD pipeline on OpenShift.

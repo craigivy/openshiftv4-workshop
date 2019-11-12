@@ -35,7 +35,7 @@ modules:
     name: Deploy Java application
   06-adding-database-to-springboot-app:
     name: Adding Database to the Springboot Application
-  06-cicd-short:
+  07-cicd:
     name: Create a Pipeline
-  07-using-codeready:
+  08-using-codeready:
     name: CodeReady Workspace

@@ -82,6 +82,10 @@ image::mysql-details.png[image]
 
 - Click on the `Create`
 - Click `Topology` on the left menu
+- Drag the arrow from springboot app icon to the mysql icon
+
+image::binding.png[image]
+
 - Wait for the solid blue show up for mysql, it means it is real
 
 image::java-topology.png[image]
@@ -116,19 +120,19 @@ the commands below.
 
 - Change to `java-userxx` project
 
-  ```
+```
   oc project java-userxx
-  ```
+```
 
 - Create a new local file with name `application.properties` with the following
 content.
 
-  ```
+```
   spring.datasource.platform=mysql
   spring.datasource.url= jdbc:mysql://mysql.java-userxx:3306/sampledb?useSSL=false
   spring.datasource.username=user
   spring.datasource.password=password
-  ```
+```
 
 - Service Naming Convention
   You need to make sure that you substitute the correct values you noted in the
@@ -146,14 +150,15 @@ content.
 
 - Create a ConfigMap with name `app-props`
 
-  ```
+```
   $ oc create configmap app-props --from-file=application.properties
   configmap "app-props" created
-  ```
+```
+
 
 - Let's take a look at the configmap details
 
-  ```
+```
   $ oc describe configmap app-props
   Name:         app-props
   Namespace:    java-project
@@ -170,13 +175,13 @@ content.
   spring.datasource.password=password
 
   Events:  <none>
-  ```
+```
 
 - Edit the ConfigMap using when it is needed
 
-  ```
+```
   oc edit configmap app-props
-  ```
+```
 
 === Edit Deployment Configuration
 
@@ -197,7 +202,7 @@ use it. You can either edit from CLI or from WebConsole.
 - Click `YAML`
 - Scroll down to container spec, that looks like this:
 
-  ```
+```
       spec:
       containers:
         - name: springbootapp
@@ -215,41 +220,41 @@ use it. You can either edit from CLI or from WebConsole.
       dnsPolicy: ClusterFirst
       securityContext: {}
       schedulerName: default-scheduler
-  ```
+```
 
   Note there could be multiple `spec`s in your DC. Look for the one with `containers`
 
 - Add a volume that points to our ConfigMap right under `spec`. It is explained here
 https://docs.openshift.com/container-platform/latest/dev_guide/configmaps.html#configmaps-use-case-consuming-in-volumes
 
-  ```
+```
   spec:
     volumes:
       - name: app-props-volume
         configMap:
           name: app-props
-  ```
+```
 
   WARNING: Be super-careful with indentation
 
 - Add `volumeMount` to mount the `volume` that we just added into the pod.
 It should be right under the container `name:` as shown below.
 
-  ```
+```
         containers:
           -
             name: springbootapp
             volumeMounts:
             - name: app-props-volume
               mountPath: /opt/app-root/src/config
-  ```
+```
 
   WARNING: Be super-careful with indentation
 
 After the changes, the `template` section in the dc, should now look
 like this
 
-  ```
+```
     template:
     metadata:
       creationTimestamp: null
@@ -283,14 +288,14 @@ like this
       dnsPolicy: ClusterFirst
       securityContext: {}
       schedulerName: default-scheduler
-  ```
+```
 
 - Using OC CLI to add ConfigMap
   *Optional:* you can run the following to do the update on the deploymentConfig:
 
-  ```
+```
    oc set volumes dc/springbootapp --add -m /opt/app-root/src/config --configmap-name=app-props
-  ```
+```
 
 - where does the application.properties go?
   Since the mount path is `/opt/app-root/src/config`?

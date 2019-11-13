@@ -71,7 +71,7 @@ image::jenkins.png[image]
 - Click `YAML`
 - Enter the following in the text area
 
-....
+```
 kind: BuildConfig
 apiVersion: build.openshift.io/v1
 metadata:
@@ -100,7 +100,7 @@ spec:
   output:
   resources:
   postCommit:
-....
+```
 
   Note that the build configuration uses `JenkinsPipelineStrategy`. Also
   the `spec.strategy.jenkinsPipelineStrategy.jenkinsfile` is the actual
@@ -117,7 +117,7 @@ will give jenkins full access to these projects.
 - Login via `oc login -u Userxx {{API_URL}}`
 - Execute the following OC commands
 
-....
+```
 oc new-project testing-UserName
 oc new-project development-UserName
 oc adm policy add-role-to-group system:image-puller system:serviceaccounts:testing-UserName -n development-UserName
@@ -125,7 +125,7 @@ oc adm policy add-role-to-user admin system:serviceaccount:pipeline-UserName:jen
 oc adm policy add-role-to-user admin system:serviceaccount:pipeline-UserName:jenkins -n testing-UserName
 oc project development-UserName
 oc new-app openshift/php~https://github.com/RedHatWorkshops/welcome-php
-....
+```
 
 For reference the syntax is: `system:serviceaccount:PROJECTNAME:SERVICEACCOUNT`
 
@@ -139,39 +139,26 @@ For reference the syntax is: `system:serviceaccount:PROJECTNAME:SERVICEACCOUNT`
 - Edit the current content of `jenkinsfile` with the following. Please update
 `UserName` to your username.
 
-....
+```
 strategy:
   type: JenkinsPipeline
   jenkinsPipelineStrategy:
     jenkinsfile: |-
     node() {
-
       stage 'build'
-
       sh 'oc start-build welcome-php -n development-UserName'
-
       stage 'deploy'
-
       sh 'oc rollout latest welcome-php -n development-UserName'
-
       stage 'cleanup testing'
-
       sh 'oc delete all --all -n testing-UserName'
-
       stage 'deployInTesting'
-
       input 'Promote Dev Image to Testing?'
-
       sh 'oc tag development-UserName/welcome-php:latest
       testing-UserName/welcome-php:promote-qa'
-
       sh 'oc new-app testing-UserName/welcome-php:promote-qa -n testing-UserName'
-
       sh 'oc scale --replicas=3 dc welcome-php -n testing-UserName'
-
-
       }
-....
+```
 
 - Click `Save`. (Make sure you change the values according to your configuration)
 

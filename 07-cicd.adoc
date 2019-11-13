@@ -229,7 +229,7 @@ image::webhook.png[image]
 - Click `Copy URL with Secret` for `Github webhook`
 - Use this URL to configure your github repo to trigger the pipeline
 
-=== Setting it up from github
+=== Setting it up from github (*BONUS* if you update the build to use your forked git repo)
 Based on what you learn in the past, go to your github repository that
 you cloned and set up a webhook pointing to this URL.
 

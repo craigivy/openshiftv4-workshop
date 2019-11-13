@@ -199,7 +199,8 @@ Now, let take a look at the OpenShift's aggregated logging console.
 - Go to the web console {{CONSOLE_ADDRESS}}
 - Make sure you are using `Developer` persona
 - Click `Topology`
-- Click on the name of the pod on the details
+- Click onto the middle of the icon
+- Click on the name of the pod on the details page
 - Click `Actions` -> `Delete Pod`
 - Wait for the pod to come up as `Running`
 - Click `Actions` -> `Delete Pod`

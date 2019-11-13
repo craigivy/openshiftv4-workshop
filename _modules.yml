@@ -40,5 +40,3 @@ modules:
     name: Adding Database to the Springboot Application
   07-cicd:
     name: Create a Pipeline
-  08-using-codeready:
-    name: CodeReady Workspace

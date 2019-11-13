@@ -322,7 +322,7 @@ Note the contents of this file are what you added to the ConfigMap.
 
 Go back to the `Overview` page. Click on your application url which
 would be something like
-`http://springbootapp-java-spring-userxx.{{APPS_ADDRESS}}/`
+`http://springbootapp-java-userxx.{{APPS_ADDRESS}}`
 
 It will open a new tab and your running application will greet you
 

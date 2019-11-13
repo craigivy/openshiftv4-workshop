@@ -68,6 +68,7 @@ You have two ways to add this to the catalog.
 === To add using CLI run the `oc create` command:
 
 ....
+$ oc project java-Username
 $ oc create -f https://raw.githubusercontent.com/piggyvenus/openshiftv4-workshop/ocp4.2/springboot.json
 imagestream "springboot" created
 ....

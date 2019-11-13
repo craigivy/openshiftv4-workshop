@@ -1,4 +1,6 @@
 [[custom-java-app]]
+= Build Spring Boot Application
+
 == Build Spring Boot Application
 
 In this exercise we will deploy a Java application

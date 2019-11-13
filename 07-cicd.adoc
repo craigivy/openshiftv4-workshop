@@ -1,17 +1,19 @@
 [[cicd]]
 = Creating a Pipeline
 
+== Creating a Pipeline
+
 In this lab, we will learn to create a build pipeline on OpenShift. This
 pipeline will be setup using Jenkins running as an application pod on
 OpenShift. The pipeline running on Jenkins will trigger builds and
 deployments on OpenShift.
 
-== Prerequisites:
+=== Prerequisites:
 
   * You need a github account if you want to make changes and test the pipeline kick-off.
   * You will be using the projects you created in the "Promoting Applications" lab.
 
-== Create Project
+=== Create Project
 IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
@@ -26,7 +28,7 @@ image::dev-project.png[image]
 
 image::create-project.png[image]
 
-== Deploy OOTB Jenkins
+=== Deploy OOTB Jenkins
 
 - Navigate to `+Add`
 - Click on `From Catalog`
@@ -61,7 +63,7 @@ image::jenkins-login.png[image]
 
 image::jenkins.png[image]
 
-== Deploy your CI/CD tool (Jenkins)
+=== Deploy your CI/CD tool (Jenkins)
 
 - Login {{CONSOLE_ADDRESS}}
 - From `Developer` persona
@@ -104,7 +106,7 @@ spec:
   the `spec.strategy.jenkinsPipelineStrategy.jenkinsfile` is the actual
   pipeline that runs. We will discuss that in the next step.
 
-== Create projects & Permissions and Configuration Changes
+=== Create projects & Permissions and Configuration Changes
 
 
 The Jenkins user in the jenkins project you created needs to have access to the
@@ -127,7 +129,7 @@ oc new-app openshift/php~https://github.com/RedHatWorkshops/welcome-php
 
 For reference the syntax is: `system:serviceaccount:PROJECTNAME:SERVICEACCOUNT`
 
-== Updating the pipeline
+=== Updating the pipeline
 
 - From `Developer` persona
 - Click `Builds`
@@ -193,7 +195,7 @@ triggers:
 ```
 - Click `Save`
 
-== Start Pipeline
+=== Start Pipeline
 
 - From the top, select `pipeline-UserName` project
 - Click `Builds`
@@ -219,7 +221,7 @@ image::pipeline-completed.png[image]
 
 image::testing-result.png[image]
 
-== Configure webhook and trigger with changes (optional)
+=== Configure webhook and trigger with changes (optional)
 
 - Go back to the build pipeline `myfirstpipeline`
 - Click `YAML`

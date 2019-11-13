@@ -5,101 +5,25 @@
 
 In this lab, we're aiming to get you familiar with Red Hat CodeReady Workspaces.
 
-=== Deploying CodeReady Workspace
+- Go to {{CRW_URL}}
+- Register as a new user
 
-CodeReady is Red Hat's browser-based intelligent developer IDE. We'll use the
-CodeReady operator to deploy CodeReady so that we can use it in our project
-to develop our apps.
-
-IMPORTANT: Please replace *Username* with your username
-
-- Create a new project `codeready-Username`
-- As an Operator administrator, run this command before proceeding:
-
-```
-oc create clusterrole codeready-operator --resource=oauthclients --verb=get,create,delete,update,list,watch
-oc create clusterrolebinding codeready-operator --clusterrole=codeready-operator --serviceaccount=codeready-Username:codeready-operator
-
-```
-
-- Navigate to Catalog -> OperatorHub
-- Enter `CodeReady` in the search field
-
-image::codeready-operator.png[image]
-
-- Click the `CodeReady` operator
-- Click `Install`
-
-image::codeready-subscription.png[image]
-
-- Select your newly created project as `A specific namespace`
-- Click `Subscribe`
-- Navigate `Installed Operators`
-
-image::codeready-installed.png[image]
-
-- Click onto `Red Hat CodeReady Workspace`
-- Click `Create New`
-- Add the specific `postgresImage` under `database` as shown below
-
-```
-apiVersion: org.eclipse.che/v1
-kind: CheCluster
-metadata:
-  name: codeready
-  namespace: codyready-test
-spec:
-  server:
-    cheFlavor: codeready
-    tlsSupport: false
-    selfSignedCert: false
-  database:
-    externalDb: false
-    chePostgresHostName: ''
-    chePostgresPort: ''
-    chePostgresUser: ''
-    chePostgresPassword: ''
-    chePostgresDb: ''
-    postgresImage: 'registry.access.redhat.com/rhscl/postgresql-10-rhel7:1-35'
-  auth:
-    openShiftoAuth: false
-    externalKeycloak: false
-    keycloakURL: ''
-    keycloakRealm: ''
-    keycloakClientId: ''
-  storage:
-    pvcStrategy: per-workspace
-    pvcClaimSize: 1Gi
-    preCreateSubPaths: true
-
-```
-
-- Click `Create`
-- Navigate to `Workloads` -> `Pods`
-- You will see Pods as shown below are created
-
-image::codeready-pods.png[image]
-
-- Wait until all pods are `Running`
-- Navigate to `Networking` -> `Routes`
-- Click onto the URL under `LOCATION` for `codeready` route
-
-image::codereadyworkspace.png[image]
+image::crw-register.png[image]
 
 - Click `Register`
-
-image::codeready-register.png[image]
-
 - Enter the following information:
-   * First name: Devday
-   * Last name: User01
+   * First name: your_name
+   * Last name: your_lastname
    * Email: any_email@devday.com
    * Username: *Username*
    * Password: openshift4
 
-IMPORTANT: Please replace *Username* with your username
+image::codeready-register.png[image]
 
 - Click `Register`
+
+IMPORTANT: Please replace *Username* with your username
+
 - Will be prompt to create new workspace
 
 image::codeready-createws.png[image]
@@ -156,16 +80,14 @@ mvn spring-boot:run
 - Scroll down and replace `${server.springboot}` in the `Preview URL` session
 - Click `Save`
 - Scroll back up and click `RUN` the green button
-
-image::codeready-createrun.png[image]
-
-image::springboot-result.png[image]
+- Click the preview URL in the terminal (indicates in the image)
 
 image::codeready-preview.png[image]
 
-- Click the preview URL in the terminal (indicates in the image)
+- Browser open URL as shown below.
 
 image::springboot-result.png[image]
+
 
 
 === Create factory
@@ -175,7 +97,7 @@ image::springboot-result.png[image]
 
 image::codeready-factory.png[image]
 
-- Enter 'SpringBootSample' as name
+- Enter `SpringBootSample` as name
 - Click `Create` -> `Close`
 
 image::codeready-factory2.png[image]
@@ -190,7 +112,8 @@ image::codeready-factory3.png[image]
 
 image::codeready-sample.png[image]
 
-- Add `Buid and Run` to `runCommand` -> Click `Add`
+- Enter `Buid and Run` as value for `runCommand` -> Click `Add`
+- Scroll back to the top
 - Click `Open`
 
 image::codeready-openfactory.png[image]

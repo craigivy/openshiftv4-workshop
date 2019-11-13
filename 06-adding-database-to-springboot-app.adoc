@@ -2,6 +2,8 @@
 
 = Adding a backend database to the SpringBoot application
 
+== Adding a backend database to the SpringBoot application
+
 In this exercise we will add a backend database to the previous deployed
 SpringBoot application.
 
@@ -42,7 +44,7 @@ straight forward.. isn't it!!
 In this lab, we will deploy the same as a 2-tier application by adding a
 MySQL database running as a separate pod.
 
-== Add a MySQL database to this project
+=== Add a MySQL database to this project
 
 Based on what you learnt in the previous labs, you know what to do!!
 
@@ -83,7 +85,7 @@ image::mysql-details.png[image]
 image::java-topology.png[image]
 
 
-== Configuring database connection parameters
+=== Configuring database connection parameters
 
 The simplest way is to edit `application.properties` file to the values
 you noted in the last step i.e.
@@ -174,7 +176,7 @@ content.
   oc edit configmap app-props
   ....
 
-== Edit Deployment Configuration
+=== Edit Deployment Configuration
 
 So far, we have created a ConfigMap in the project but your springboot
 application does not know how to use it.

@@ -1,9 +1,9 @@
 [[custom-java-app]]
-= Build Spring Boot Application
+== Build Spring Boot Application
 
 In this exercise we will deploy a Java application
 
-== Create Project
+=== Create Project
 IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
@@ -24,7 +24,7 @@ the catalog. In this lab, we will learn how to add the Spring Boot image
 to the project catalog so that you can deploy the application directly
 from your screen.
 
-== Add the Spring Boot image stream.
+=== Add the Spring Boot image stream.
 
 We will use the image stream from the following YAML
 
@@ -93,7 +93,7 @@ springboot
 - Copy paste the above imagestream contents into the text box
 - Click `Create` button.
 
-== Deploy application
+=== Deploy application
 
 Now it is time to create your application and use the Spring Boot S2I image to deploy your sample Spring Boot application
 https://github.com/RedHatWorkshops/spring-sample-app
@@ -161,7 +161,7 @@ Backing pods can be added to or removed from a service arbitrarily while the
 service remains consistently available, enabling anything that depends on the
 service to refer to it at a consistent address.
 Services are assigned an IP address and port pair that, when accessed, proxy to
-an appropriate backing pod. 
+an appropriate backing pod.
 
 
 A router uses the service selector to find the service and the endpoints backing

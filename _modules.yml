@@ -21,6 +21,9 @@ config:
     - name: LOGGING_URL
       desc: Logging URL
       value: https://kibana-openshift-logging.apps.honda-workshop.sc.osecloud.com/
+    - name: CRW_URL
+      desc: CodeReady Workspace URL
+      value: http://codeready-codereadyworkspace.apps.honda-workshop.sc.osecloud.com
 
 modules:
   0-setting-up-client-tools:

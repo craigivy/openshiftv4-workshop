@@ -136,8 +136,8 @@ For reference the syntax is: `system:serviceaccount:PROJECTNAME:SERVICEACCOUNT`
 - Click on BuildConfig `myfirstpipeline`
 - Under the `Overview` tab, you can see the details about the pipeline
 - Click `YAML` tab
-- Edit the current content of `jenkinsfile` with the following. Please update
-`UserName` to your username.
+- Edit the current content of `jenkinsfile` with the following.
+**Please update `UserName` to your username**
 
 ```
 strategy:
@@ -153,8 +153,7 @@ strategy:
       sh 'oc delete all --all -n testing-UserName'
       stage 'deployInTesting'
       input 'Promote Dev Image to Testing?'
-      sh 'oc tag development-UserName/welcome-php:latest
-      testing-UserName/welcome-php:promote-qa'
+      sh 'oc tag development-UserName/welcome-php:latest testing-UserName/welcome-php:promote-qa'
       sh 'oc new-app testing-UserName/welcome-php:promote-qa -n testing-UserName'
       sh 'oc scale --replicas=3 dc welcome-php -n testing-UserName'
       }

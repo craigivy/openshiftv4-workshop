@@ -11,25 +11,21 @@ config:
       value: https://console-openshift-console.apps.honda-workshop.sc.osecloud.com/
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
-      value: apps.honda-workshop.sc.osecloud.com/
+      value: apps.ocp4demo.sc.osecloud.com/
     - name: GET_STARTED_CLI_URL
       desc: URL to documentation to configure CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
     - name: API_URL
       desc: URL to API server
-      value: https://api.honda-workshop.sc.osecloud.com:6443
+      value: https://api.ocp4demo.sc.osecloud.com:6443
     - name: LOGGING_URL
       desc: Logging URL
-      value: https://kibana-openshift-logging.apps.honda-workshop.sc.osecloud.com/
+      value: https://kibana-openshift-logging.apps.ocp4demo.sc.osecloud.com
     - name: CRW_URL
       desc: CodeReady Workspace URL
-      value: http://codeready-codereadyworkspace.apps.honda-workshop.sc.osecloud.com
+      value: http://codeready-codereadyworkspace.apps.ocp4demo.sc.osecloud.com
 
 modules:
-  0-setting-up-client-tools:
-    name: Set up on your Local environment
-  01-verify-connectivity:
-    name: Verify Connectivity
   02-create-app-from-container-image:
     name: Create an App using Container image
   04-deploy-dotnet-app:

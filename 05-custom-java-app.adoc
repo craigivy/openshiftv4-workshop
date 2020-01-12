@@ -65,7 +65,7 @@ You have two ways to add this to the catalog.
 1. Add from command line
 2. Add using the web console
 
-=== To add using CLI run the `oc create` command:
+=== To add using CLI run the `oc create` command (Optional):
 
 ....
 $ oc project java-Username

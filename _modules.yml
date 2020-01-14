@@ -5,7 +5,7 @@ config:
       value: openshift4
     - name: VERSION
       desc: Version is used
-      value: 4.2.2
+      value: 4.2.13
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
       value: https://https://console-openshift-console.apps.ocp4demo.sc.osecloud.com/
@@ -28,11 +28,13 @@ config:
 modules:
   02-create-app-from-container-image:
     name: Create an App using Container image
+  03-deploy-java-app:
+    name: Deploy Java application
   04-deploy-dotnet-app:
     name: Deploy a .Net core Application
   05-custom-java-app:
-    name: Deploy Java application
+    name: Deploy a customized Spring Boot Application
   06-adding-database-to-springboot-app:
-    name: Adding Database to the Springboot Application
+    name: Add Database to an Application
   07-cicd:
     name: Create a Pipeline

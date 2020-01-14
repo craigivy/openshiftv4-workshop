@@ -8,7 +8,7 @@ config:
       value: 4.2.2
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
-      value: https://console-openshift-console.apps.honda-workshop.sc.osecloud.com/
+      value: https://https://console-openshift-console.apps.ocp4demo.sc.osecloud.com/
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
       value: apps.ocp4demo.sc.osecloud.com/
